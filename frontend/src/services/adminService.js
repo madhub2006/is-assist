@@ -1,0 +1,1 @@
+export { adminService } from "./adminAndReportService";

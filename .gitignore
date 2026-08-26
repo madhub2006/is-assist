@@ -1,0 +1,13 @@
+.env
+*.db
+*.sqlite
+*.sqlite3
+.pytest_cache/
+__pycache__/
+*.py[cod]
+backend/uploads/
+uploads/
+frontend/node_modules/
+frontend/dist/
+.vscode/
+*.log

@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: is_assist_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: is_assist_user
+      POSTGRES_PASSWORD: is_assist_secure_password_2026
+      POSTGRES_DB: is_assist_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U is_assist_user -d is_assist_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: is_assist_backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://is_assist_user:is_assist_secure_password_2026@postgres:5432/is_assist_db
+      - SECRET_KEY=is-assist-super-secret-production-key-change-in-env-2026
+      - ENVIRONMENT=production
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: is_assist_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -13,6 +13,5 @@ PyMuPDF>=1.24.0
 pytest>=8.1.0
 httpx>=0.27.0
 aiofiles>=23.2.1
-# Optional production semantic backend; the app retains a deterministic local fallback.
-sentence-transformers>=3.0.0
+# Optional model package can be installed separately for local/AI worker deployments.
 pgvector>=0.3.0

@@ -1,11 +1,14 @@
 from app.core.security import get_password_hash
-from app.database.session import SessionLocal
+from app.database.base import Base
+from app.database.session import engine, SessionLocal
 from app.models.role_department import Department, Role
 from app.models.standard import Standard
 from app.models.user import User
+import app.models
 
 
 def seed():
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         roles = {}

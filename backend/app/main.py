@@ -30,13 +30,31 @@ app = FastAPI(
 )
 
 # Configure CORS
+origins = [origin.strip().strip('[]').strip('"').strip("'") for origin in settings.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
+if "*" not in origins:
+    origins.append("*")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin.strip().strip('[]').strip('"') for origin in settings.BACKEND_CORS_ORIGINS.split(",") if origin.strip()],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def on_startup():
+    from app.database.base import Base
+    from app.database.session import engine
+    import app.models
+    from app.seed_production import seed
+
+    try:
+        Base.metadata.create_all(bind=engine)
+        seed()
+    except Exception as e:
+        print(f"Startup DB init info: {e}")
 
 
 # Global Custom Exception Handler

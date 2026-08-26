@@ -5,7 +5,7 @@
     "watchPatterns": ["app/**", "requirements.txt", "alembic/**"]
   },
   "deploy": {
-    "startCommand": "python -m app.seed_production && uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "startCommand": "sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}'",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",

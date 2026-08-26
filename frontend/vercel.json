@@ -4,6 +4,7 @@
   "installCommand": "npm ci",
   "framework": "vite",
   "rewrites": [
+    { "source": "/api/:match*", "destination": "https://api-production-d266.up.railway.app/api/:match*" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

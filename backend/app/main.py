@@ -6,12 +6,7 @@ import os
 
 from app.core.config import settings
 from app.core.exceptions import ISAssistException
-from app.database.base import Base
-from app.database.session import engine
 from app.api.api import api_router
-
-# Initialize database schema tables
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=f"{settings.PROJECT_NAME} API",

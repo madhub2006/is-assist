@@ -85,6 +85,43 @@ def health_check():
 # Include API Routes
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
+# Static files and SPA fallback for Unified Single-Link Deployment
+frontend_dist_candidates = [
+    os.environ.get("FRONTEND_DIST_DIR", ""),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "frontend", "dist"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend_dist"),
+    os.path.join(os.getcwd(), "frontend", "dist"),
+    os.path.join(os.getcwd(), "frontend_dist"),
+    "/app/frontend_dist",
+]
+
+frontend_dist = None
+for candidate in frontend_dist_candidates:
+    if candidate and os.path.exists(candidate) and os.path.isdir(candidate):
+        frontend_dist = candidate
+        break
+
+if frontend_dist:
+    from fastapi.responses import FileResponse
+    assets_path = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_path):
+        app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        if full_path.startswith("api") or full_path.startswith("docs") or full_path.startswith("redoc") or full_path == "openapi.json":
+            return JSONResponse(status_code=404, content={"message": "Not Found"})
+        
+        file_path = os.path.join(frontend_dist, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        
+        index_file = os.path.join(frontend_dist, "index.html")
+        if os.path.isfile(index_file):
+            return FileResponse(index_file)
+        return JSONResponse(status_code=404, content={"message": "Frontend build not found"})
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+

@@ -17,7 +17,12 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./is_assist.db"
 
     # CORS
-    BACKEND_CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
+    BACKEND_CORS_ORIGINS: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:3000,http://127.0.0.1:3000,"
+        "https://frontend-m4a02jbms-syntax-optimizers.vercel.app,"
+        "https://frontend-m4a02jbms-syntax-optimizers.vercel.app/"
+    )
 
     # File uploads
     UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "uploads")

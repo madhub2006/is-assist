@@ -5,10 +5,6 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/:match*",
-      "destination": "https://api-production-24e25.up.railway.app/api/:match*"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
